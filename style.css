@@ -1,0 +1,14 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.node.highlight rect,
+.node.highlight circle {
+  fill: #ffeb3b;
+}
+
+.edgePath.highlight path {
+  stroke: #ff5722;
+  stroke-width: 2px;
+}
