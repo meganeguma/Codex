@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+  docs:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: sudo apt-get update && sudo apt-get install -y graphviz
+      - run: npm ci
+      - run: ./scripts/gen-deps.sh
+      - run: npx js2flowchart src/app.js -o docs/diagrams/app.svg
+      - run: npm run docs
+      - run: node scripts/gen-system.mjs
+      - run: npx mmdc -i docs/diagrams/system.mmd -o docs/diagrams/system.svg
+      - run: ./scripts/update-readme.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: docs/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docs
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci && npm run build && mv dist/* docs/
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs

@@ -1,5 +1,5 @@
-# PipelineLens
+# Marketing Demo Site
 
-PipelineLens visualizes software dependency graphs using Mermaid. Selecting a node highlights all downstream nodes and edges, helping to evaluate failure impact.
+This repository demonstrates a simple ROI Calculator front-end with GitHub Actions CI/CD. The workflow runs linting, unit tests, generates documentation and diagrams, and deploys the site to GitHub Pages.
 
-Open `index.html` in a web browser to try the demo.
+Open `dist/index.html` after running `npm run build` or visit the GitHub Pages site once deployed.
